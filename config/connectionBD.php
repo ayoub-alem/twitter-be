@@ -2,7 +2,7 @@
 //ENV 
 require __DIR__ . './../vendor/autoload.php';
 //CORS and exposing x-auth-token header 
-require('cors.php');
+require(__DIR__ .'./cors.php');
 
 //dotENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../");

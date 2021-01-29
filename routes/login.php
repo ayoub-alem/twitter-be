@@ -1,6 +1,6 @@
 <?php
 // this file return a link of a db connection with a variable name $db
-require('../models/users.php');
+require(__DIR__ .'./../models/users.php');
 
 //create new user
 $user = new User($link);

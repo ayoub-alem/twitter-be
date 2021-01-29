@@ -1,6 +1,6 @@
 <?php
 // this file contain a class named user
-require('../models/users.php');
+require(__DIR__ .'./../models/users.php');
 
 //create new user
 $user = new User($link);

@@ -1,6 +1,6 @@
 <?php
 //DDB CON
-require('../config/connectionBD.php');
+require( __DIR__ . './../config/connectionBD.php');
 //JWT
 require __DIR__ . './../vendor/autoload.php';
 
@@ -59,7 +59,7 @@ class User
         if ($_FILES["photo"]["size"] > 1000000) res("Photo's size is too large abn 3emmi N9ss shwia ahbibi ...", 400);
         $this->checkPhotoExtension();
         $photoName = time() . "-" . $_FILES["photo"]["name"];
-        if (!move_uploaded_file($temp_name, "./../pictures/" . $photoName))  res("Smahlina an error Occured", 500);
+        if (!move_uploaded_file($temp_name, __DIR__ . "./../pictures/" . $photoName))  res("Smahlina an error Occured", 500);
         return $photoName;
     }
 
