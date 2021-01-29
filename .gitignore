@@ -5,6 +5,11 @@
 /.pnp
 .pnp.js
 
+/vendor/
+vendor/
+.env
+
+
 # testing
 /coverage
 
