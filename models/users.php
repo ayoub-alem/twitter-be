@@ -1,6 +1,6 @@
 <?php
 //DDB CON
-require( __DIR__ . './../config/connectionBD.php');
+require(__DIR__ . './../config/connectionBD.php');
 //JWT
 require __DIR__ . './../vendor/autoload.php';
 
@@ -309,7 +309,15 @@ class User
         }
         $result = $this->requete($requete);
         if (!$result) res("Soryy you cannot post a tweet for now", 500);
-        res("Successful tweet", 200);
+        $lastInsertedPostRequete = "SELECT user_id, nom, prenom, photo, ps.post_id, ps.post_date as compare_date,
+                                    ps.description_post, ps.post_photo 
+                                    FROM users 
+                                    JOIN (SELECT * FROM posts WHERE post_id = LAST_INSERT_ID())  ps
+                                    USING(user_id)";
+        $lastInsertedPost = $this->requete($lastInsertedPostRequete);
+        if (!$lastInsertedPost) return false;
+        $lastInsertedPost = resultInTable($lastInsertedPost);
+        return $lastInsertedPost[0];
     }
 
     public function getSubjects()
@@ -339,8 +347,11 @@ class User
     public function getPosts($payload)
     {
         $this->user_id = $payload["user_id"];
-        $requete = "SELECT user_id, nom, prenom, photo, post_id, post_date as compare_date, description_post, post_photo 
-        FROM users JOIN posts USING(user_id) WHERE user_id IN (SELECT followed_id from suivre_user WHERE follower_id = $this->user_id) Or users.user_id = $this->user_id Order BY(compare_date) DESC";
+        $requete = "SELECT user_id, nom, prenom, photo, post_id, post_date as compare_date,
+                    description_post, post_photo 
+                    FROM users JOIN posts USING(user_id) WHERE user_id IN 
+                    (SELECT followed_id from suivre_user WHERE follower_id = $this->user_id)
+                    Or users.user_id = $this->user_id Order BY(compare_date) DESC";
         $result = $this->requete($requete);
         if (!$result) res("Refresh the page an error occurred !", 500);
         $resultTable = resultInTable($result);
@@ -379,5 +390,19 @@ class User
         $result = $this->requete($requete);
         if (!$result) res("Sorry you can not retweet the same post again, and you cannot retweet a retweeted post :)", 500);
         res("Post retweeted successfully :)", 200);
+    }
+
+    public function getFollowedUsers($payload)
+    {
+        $this->user_id = $payload["user_id"];
+        $requete = "SELECT user_id FROM users WHERE user_id IN (SELECT followed_id FROM suivre_user WHERE follower_id = $this->user_id)";
+        $result = $this->requete($requete);
+        if (!$result) exit();
+        $resultTable = resultInTable($result);
+        $listOfids = array();
+        foreach ($resultTable as $key => $value) {
+            array_push($listOfids, $value["user_id"]);
+        }
+        return $listOfids;
     }
 }
