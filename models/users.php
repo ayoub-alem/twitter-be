@@ -395,7 +395,9 @@ class User
     public function getFollowedUsers($payload)
     {
         $this->user_id = $payload["user_id"];
-        $requete = "SELECT user_id FROM users WHERE user_id IN (SELECT follower_id FROM suivre_user WHERE followed_id = $this->user_id)";
+        $requete = "SELECT user_id FROM users 
+                    WHERE user_id IN 
+                    (SELECT follower_id FROM suivre_user WHERE followed_id = $this->user_id)";
         $result = $this->requete($requete);
         if (!$result) exit();
         $resultTable = resultInTable($result);
